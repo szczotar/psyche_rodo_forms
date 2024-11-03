@@ -3,17 +3,29 @@
 
 import customtkinter as ctk
 import tkinter as tk
+import re
+from tkinter import messagebox
 
 # Basic parameters and initializations
 # Supported modes : Light, Dark, System
-ctk.set_appearance_mode("System") 
+ctk.set_appearance_mode("dark") 
 
-# Supported themes : green, dark-blue, blue
-ctk.set_default_color_theme("green") 
+# Supported themes : green, dark-blue, blue   
+ctk.set_default_color_theme("blue") 
 
 appWidth, appHeight = 600, 700
 
-# App Class
+from tkinter import ttk
+
+
+
+
+# root = tk.Tk()
+# vcmd = (root.register(VersionValidation), '%P')
+# Pass the entire Entry string.  Avoids issues around delete.
+
+# tk.Entry( root, validatecommand = vcmd, validate = 'key' ).grid()
+
 class App(ctk.CTk):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
@@ -34,6 +46,7 @@ class App(ctk.CTk):
 		self.nameEntry.grid(row=0, column=1,
 							columnspan=3, padx=20,
 							pady=20, sticky="ew")
+		self.nameEntry._entry.configure(validate="key", validatecommand=(VersionValidation("ffsfa"), '%P'))
 
 		# Age Label
 		self.ageLabel = ctk.CTkLabel(self,
@@ -141,8 +154,13 @@ class App(ctk.CTk):
 		self.Age = self.ageEntry.get()
 		print(self.name, self.Age)
 		return self.name
-		
-
+	
+	
+def VersionValidation( p):
+		if re.match(r'^([0-9]+_?)+$', p ):
+			return True    
+		else:
+			messagebox.showerror("Wrong")	
 
 if __name__ == "__main__":
 	app = App()
