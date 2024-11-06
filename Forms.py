@@ -156,7 +156,7 @@ class App(ctk.CTk):
 		return self.name
 	
 	
-def VersionValidation( p):
+def VersionValidation(p):
 		if re.match(r'^([0-9]+_?)+$', p ):
 			return True    
 		else:

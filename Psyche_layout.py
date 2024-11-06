@@ -7,6 +7,7 @@ from datetime import datetime
 from docxtpl import DocxTemplate
 import jinja2
 from customtkinter import filedialog  
+from CustomTkinterMessagebox import CTkMessagebox
 
 tpl = DocxTemplate(r'C:\Users\ArturSzczotarski\psyche\RODO_template.DOCX')
 
@@ -129,6 +130,8 @@ class App(customtkinter.CTk):
 							columnspan=2, padx=10,
 							pady=10, sticky="ew")
         
+        
+        
         #generate button
         self.generate_button1 = customtkinter.CTkButton(self.tabview.tab("Form1"), text="Generuj" , command=self.generate_template_rodo)
         self.generate_button1.grid(row=6, column=0, padx=20, pady=50)
@@ -164,34 +167,33 @@ class App(customtkinter.CTk):
     def change_appearance_mode_event(self, new_appearance_mode: str):
         customtkinter.set_appearance_mode(new_appearance_mode)
 
-   
-    def explorer_window(self, func):
+    
+    # def explorer_window(self):
 
-        def file_explorer():
-            self.new_window = customtkinter.CTkToplevel(self)
-            self.new_window.title("new window")
-            self.new_window.geometry("400x200")
-            self.new_window.grid_columnconfigure((0,1,2), weight=0)
-            self.new_window.grid_rowconfigure((0,1,3), weight=0)
+    #     self.new_window = customtkinter.CTkToplevel(self)
+    #     self.new_window.title("new window")
+    #     self.new_window.geometry("400x200")
+    #     self.new_window.grid_columnconfigure((0,1,2), weight=0)
+    #     self.new_window.grid_rowconfigure((0,1,3), weight=0)
 
-            self.pathLabel = customtkinter.CTkLabel(self.new_window, text= "Zapisz: ")
+    #     self.pathLabel = customtkinter.CTkLabel(self.new_window, text= "Zapisz: ")
 
-            self.pathLabel.grid(row = 0, column = 0, padx= 50)
+    #     self.pathLabel.grid(row = 0, column = 0, padx= 50)
 
-            self.FormPath = customtkinter.CTkEntry(self.new_window,
-                            placeholder_text="path")
-                            
-            self.FormPath.grid(row=0, column=1,
-                                columnspan=3, padx=0,
-                                pady=50, sticky="ew") 
-            
-            self.selecPathButton =  customtkinter.CTkButton(self.new_window, text="Wybierz" , command=func)
-            self.selecPathButton.grid(row=1, column=2, padx=20, pady=0)
+    #     self.FormPath = customtkinter.CTkEntry(self.new_window,
+    #                     placeholder_text="path")
+                        
+    #     self.FormPath.grid(row=0, column=1,
+    #                         columnspan=3, padx=0,
+    #                         pady=50, sticky="ew") 
+        
+    #     self.selecPathButton =  customtkinter.CTkButton(self.new_window, text="Wybierz")
+    #     self.selecPathButton.grid(row=1, column=2, padx=20, pady=0)
 
-            self.OkButton =  customtkinter.CTkButton(self.new_window, text="OK")
-            self.OkButton.grid(row=2, column=2, padx=20, pady=10)
+    #     self.OkButton =  customtkinter.CTkButton(self.new_window, text="OK")
+    #     self.OkButton.grid(row=2, column=2, padx=20, pady=10)
 
-            return file_explorer
+
     
     def change_scaling_event(self, new_scaling: str):
         new_scaling_float = int(new_scaling.replace("%", "")) / 100
@@ -199,8 +201,12 @@ class App(customtkinter.CTk):
 
     def sidebar_button_event(self):
         print("sidebar_button click")
-
+    
     def generate_template_rodo(self):
+        
+        #validation 
+        
+        self.emailEntry._entry.configure(validatecommand=self.VersionValidation(self.emailEntry.get()))
 
         name = self.nameEntry.get()
         lastName =  self.lasNameEntry.get()
@@ -221,13 +227,18 @@ class App(customtkinter.CTk):
         tpl.render(context, jinja_env)
         tpl.save(fr"C:\Users\ArturSzczotarski\psyche\Rodo_{name}.DOCX")
 
-    @explorer_window
+   
     def selectfile(self):       
-        filename = filedialog.askopenfilename()
+        filename = filedialog.askdirectory()
         self.lasNameEntry.insert(index=0, string=str(filename))
         print(filename) 
 
-
+    def VersionValidation(self, p):
+        if len(p) > 2:
+            return True    
+        else:
+            CTkMessagebox.messagebox(title="worng", text = "wronmg")
+        	
 
 if __name__ == "__main__":
     app = App()
