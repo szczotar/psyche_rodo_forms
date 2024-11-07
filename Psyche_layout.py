@@ -9,6 +9,10 @@ import jinja2
 from customtkinter import filedialog  
 from CustomTkinterMessagebox import CTkMessagebox
 
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 tpl = DocxTemplate(r'C:\Users\ArturSzczotarski\psyche\RODO_template.DOCX')
 
 
@@ -206,8 +210,9 @@ class App(customtkinter.CTk):
         
         #validation 
         
-        self.emailEntry._entry.configure(validatecommand=self.VersionValidation(self.emailEntry.get()))
+        # self.emailEntry._entry.configure(validatecommand=self.VersionValidation(self.emailEntry.get()))
 
+        #data provided
         name = self.nameEntry.get()
         lastName =  self.lasNameEntry.get()
         pesel = self.peselEntry.get()
@@ -225,13 +230,19 @@ class App(customtkinter.CTk):
 
         jinja_env = jinja2.Environment(autoescape=True)
         tpl.render(context, jinja_env)
-        tpl.save(fr"C:\Users\ArturSzczotarski\psyche\Rodo_{name}.DOCX")
+        # tpl.save(fr"C:\Users\ArturSzczotarski\psyche\Rodo_{name}.DOCX")
+        tpl.save(fr"{os.environ['output_path']}/Rodo_{name}.DOCX")
+        print(fr"{os.environ['output_path']}/Rodo_{name}.DOCX")
 
    
     def selectfile(self):       
-        filename = filedialog.askdirectory()
-        self.lasNameEntry.insert(index=0, string=str(filename))
-        print(filename) 
+        new_directory = filedialog.askdirectory()
+        self.lasNameEntry.insert(index=0, string=str(new_directory))
+        os.environ['output_path'] = new_directory
+        with open(".env", "w") as file:
+            file.write(f"output_path ={new_directory}")
+
+        print(new_directory) 
 
     def VersionValidation(self, p):
         if len(p) > 2:
