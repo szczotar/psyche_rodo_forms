@@ -8,13 +8,18 @@ from docxtpl import DocxTemplate
 import jinja2
 from customtkinter import filedialog  
 from CustomTkinterMessagebox import CTkMessagebox
-
+import re
 from dotenv import load_dotenv
 import os
+from logging import Handler, error, log
+import logging
+import logging.handlers
+
 
 load_dotenv()
-tpl = DocxTemplate(r'C:\Users\ArturSzczotarski\psyche\RODO_template.DOCX')
 
+tpl = DocxTemplate(r'C:\Users\ArturSzczotarski\psyche\RODO_template.DOCX')
+logging.basicConfig(filename=f"{os.getcwd()}/logs.log",format='%(asctime)s %(message)s', datefmt ="%d-%m-%Y %H:%M:%S",level=logging.INFO)
 
 customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
@@ -29,6 +34,7 @@ class App(customtkinter.CTk):
         self.geometry(f"{900}x{580}")
 
         my_image = CTkImage(light_image=Image.open(r"C:\Users\ArturSzczotarski\psyche\logo.png"), size=(150 ,150))
+        dominka_iamge = CTkImage(light_image=Image.open(r"C:\Users\ArturSzczotarski\psyche\Dominika.jpg"), size=(150 ,150))
         # configure grid layout (4x4)
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure((2, 3), weight=0)
@@ -38,9 +44,9 @@ class App(customtkinter.CTk):
         self.sidebar_frame = customtkinter.CTkFrame(self, width=200, corner_radius=0)
         self.sidebar_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
         self.sidebar_frame.grid_rowconfigure(4, weight=1)
-        self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, image=my_image , text="")
+        self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, image=dominka_iamge , text="")
         self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
-        self.sidebar_button_1 = customtkinter.CTkButton(self.sidebar_frame, text = "Zmień ścieżkę zapisu", command=self.selectfile, font=(20,20))
+        self.sidebar_button_1 = customtkinter.CTkButton(self.sidebar_frame, text = "Zmień ścieżkę zapisu", command=self.selectOutputDirectory, font=(10,15))
         self.sidebar_button_1.grid(row=1, column=0, padx=20, pady=10)
         # self.sidebar_button_2 = customtkinter.CTkButton(self.sidebar_frame, command=self.selectfile)
         # self.sidebar_button_2.grid(row=2, column=0, padx=20, pady=10)
@@ -208,48 +214,68 @@ class App(customtkinter.CTk):
     
     def generate_template_rodo(self,):
         
-        #validation 
-        if len(self.emailEntry.get()) > 2:
-            True
+        #validation pesel 
+        if len(self.peselEntry.get()) == 11:
+            pass
         else:
-            CTkMessagebox.messagebox(title="worng", text = "wronmg")
-            raise TypeError("Only integers are allowed")
+            CTkMessagebox.messagebox(title="Błędny pesel", text = "Pesel powinien składać się z 11 cyfr")
+            raise TypeError("Only 11 didgits are allowed")
         
+        if re.match(r'^([0-9]+_?)+$', self.peselEntry.get()):
+            pass  
+        else:
+            CTkMessagebox.messagebox(title="Błędny pesel", text = "Pesel powinien składać się jedynie z cyfr")
+            raise TypeError("Only didgits are allowed")
 
-        self.emailEntry._entry.configure(validatecommand=self.VersionValidation(self.emailEntry.get()))
-     
+        #validation empty fields
+        if len(self.peselEntry.get()) != 0 and  len(self.nameEntry.get()) != 0 and len(self.lasNameEntry.get()) != 0 and len(self.phoneEntry.get()) != 0 and len(self.emailEntry.get()) != 0:
+            pass
+        else:
+            CTkMessagebox.messagebox(title="Brak danych", text = "Uzupełnij wszystkie pola")
+            raise TypeError("not all fields are filled in")
+        
+        
+        try:
         #data provided
-        name = self.nameEntry.get()
-        lastName =  self.lasNameEntry.get()
-        pesel = self.peselEntry.get()
-        phone = self.phoneEntry.get()
-        email = self.emailEntry.get()
+            name = self.nameEntry.get()
+            lastName =  self.lasNameEntry.get()
+            pesel = self.peselEntry.get()
+            phone = self.phoneEntry.get()
+            email = self.emailEntry.get()
 
-        context = {
-            "pesel" : pesel,
-            "name" : name,
-            "last_name" : lastName,
-            "date" : str(datetime.strftime(datetime.today(),'%d-%m-%Y')),
-            "email" : email,
-            "tel" :phone
-            }
+            context = {
+                "pesel" : pesel,
+                "name" : name,
+                "last_name" : lastName,
+                "date" : str(datetime.strftime(datetime.today(),'%d-%m-%Y')),
+                "email" : email,
+                "tel" :phone
+                }
 
-        jinja_env = jinja2.Environment(autoescape=True)
-        tpl.render(context, jinja_env)
-        # tpl.save(fr"C:\Users\ArturSzczotarski\psyche\Rodo_{name}.DOCX")
-        tpl.save(fr"{os.environ['output_path']}/Rodo_{name}.DOCX")
-        print(fr"{os.environ['output_path']}/Rodo_{name}.DOCX")
-        CTkMessagebox.messagebox(title="Plik został wygenerowany", text = f"Plik został utworzony i zapisany jako\n: {fr"{os.environ['output_path']}/Rodo_{name}.DOCX"}", size = "700x200")
+            jinja_env = jinja2.Environment(autoescape=True)
+            tpl.render(context, jinja_env)
+            # tpl.save(fr"C:\Users\ArturSzczotarski\psyche\Rodo_{name}.DOCX")
+            # tpl.save(fr"{os.environ['output_path']}/Rodo_{name}.DOCX")
+            tpl.save(fr"{os.environ['output_path']}/Rodo_{name}.DOCX")
+            print(fr"{os.environ['output_path']}/Rodo_{name}.DOCX")
+      
+            CTkMessagebox.messagebox(title="Plik został wygenerowany", text = f"Plik został utworzony i zapisany jako\n: {fr"{os.environ['output_path']}/Rodo_{name}.DOCX"}", size = "700x200")
         
+        except BaseException as error:
+            logging.error(datetime.today().strftime("%d-%m-%Y %H:%M:%S") + str(error))
+            CTkMessagebox.messagebox(title="Błąd", text = f"Nie można wygenerować pliku: \n {error}", size = "700x200")
+          
+            
+            
 
-        
-   
-    def selectfile(self):       
+
+    
+    def selectOutputDirectory(self):       
         new_directory = filedialog.askdirectory()
-        # self.lasNameEntry.insert(index=0, string=str(new_directory))
-        os.environ['output_path'] = new_directory
-        with open(".env", "w") as file:
-            file.write(f"output_path ={new_directory}")
+        if new_directory != os.environ['output_path'] and len(new_directory) > 0:
+            os.environ['output_path'] = new_directory
+            with open(".env", "w") as file:
+                file.write(f"output_path ={new_directory}")
 
         print(new_directory) 
 
@@ -260,7 +286,6 @@ class App(customtkinter.CTk):
         #     CTkMessagebox.messagebox(title="worng", text = "wronmg")
         #     raise TypeError("Only integers are allowed")
         
-
         try:
             if len(p) > 2:
                 raise TypeError("Only integers are allowed")    
