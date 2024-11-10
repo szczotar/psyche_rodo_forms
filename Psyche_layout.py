@@ -14,7 +14,7 @@ import os
 from logging import Handler, error, log
 import logging
 import logging.handlers
-
+from docx2pdf import convert
 
 load_dotenv()
 
@@ -22,7 +22,7 @@ tpl = DocxTemplate(r'C:\Users\ArturSzczotarski\psyche\RODO_template.DOCX')
 logging.basicConfig(filename=f"{os.getcwd()}/logs.log",format='%(asctime)s %(message)s', datefmt ="%d-%m-%Y %H:%M:%S",level=logging.INFO)
 
 customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
-customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
+customtkinter.set_default_color_theme("rose.json")  # Themes: "blue" (standard), "green", "dark-blue"
 
 
 class App(customtkinter.CTk):
@@ -33,7 +33,7 @@ class App(customtkinter.CTk):
         self.title("Psyche Forms")
         self.geometry(f"{900}x{580}")
 
-        my_image = CTkImage(light_image=Image.open(r"C:\Users\ArturSzczotarski\psyche\logo.png"), size=(150 ,150))
+        logo_image = CTkImage(light_image=Image.open(r"C:\Users\ArturSzczotarski\psyche\logo.png"), size=(150 ,150))
         dominka_iamge = CTkImage(light_image=Image.open(r"C:\Users\ArturSzczotarski\psyche\Dominika.jpg"), size=(150 ,150))
         # configure grid layout (4x4)
         self.grid_columnconfigure(1, weight=1)
@@ -44,7 +44,7 @@ class App(customtkinter.CTk):
         self.sidebar_frame = customtkinter.CTkFrame(self, width=200, corner_radius=0)
         self.sidebar_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
         self.sidebar_frame.grid_rowconfigure(4, weight=1)
-        self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, image=dominka_iamge , text="")
+        self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, image=logo_image , text="")
         self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
         self.sidebar_button_1 = customtkinter.CTkButton(self.sidebar_frame, text = "Zmień ścieżkę zapisu", command=self.selectOutputDirectory, font=(10,15))
         self.sidebar_button_1.grid(row=1, column=0, padx=20, pady=10)
@@ -75,95 +75,103 @@ class App(customtkinter.CTk):
         # create tabview
         self.tabview = customtkinter.Form1(self)
         self.tabview.grid(row=0, column=1, padx=10, pady=(20, 0), sticky="ew")
-        self.tabview.add("Form1")
-        self.tabview.add("Form2")
+        self.tabview.add("Rodo")
+        self.tabview.add("Upoważnienie")
         
-        # Form1 inside
-        self.tabview.tab("Form1").grid_columnconfigure((0,1,2,3), weight=1)  # configure grid of individual tabs
-        self.tabview.tab("Form1").grid_rowconfigure((0,1,2,3,4,5,6,7), weight=0)
-
+        # Rodo inside
+        self.tabview.tab("Rodo").grid_columnconfigure((0,1,2,3), weight=1)  # configure grid of individual tabs
+        self.tabview.tab("Rodo").grid_rowconfigure((0,1,2,3,4,5,6,7), weight=0)
 
         #Name
-        self.nameLabel = customtkinter.CTkLabel(self.tabview.tab("Form1"),
-									text="Imię")
+        self.nameLabel = customtkinter.CTkLabel(self.tabview.tab("Rodo"),
+									text="Imię", font=(10,15, "bold"))
         self.nameLabel.grid(row=0, column=0,
 							padx=10, pady=10,
-							sticky="ew",
+							sticky="ew"
                               )
-        self.nameEntry = customtkinter.CTkEntry(self.tabview.tab("Form1"),
+        self.nameEntry = customtkinter.CTkEntry(self.tabview.tab("Rodo"),
 						placeholder_text="Jan")
         self.nameEntry.grid(row=0, column=1,
 							columnspan=2, padx=10,
 							pady=10, sticky="ew")      
         #Last name
-        self.lastnameLabel = customtkinter.CTkLabel(self.tabview.tab("Form1"),
-									text="Nazwisko") 
+        self.lastnameLabel = customtkinter.CTkLabel(self.tabview.tab("Rodo"),
+									text="Nazwisko", font=(10,15, "bold")) 
         self.lastnameLabel.grid(row=1, column=0,
 							padx=10, pady=10,
 							sticky="ew")
-        self.lasNameEntry = customtkinter.CTkEntry(self.tabview.tab("Form1"),
+        self.lasNameEntry = customtkinter.CTkEntry(self.tabview.tab("Rodo"),
 						placeholder_text="Kowalski")
         self.lasNameEntry.grid(row=1, column=1,
 							columnspan=2, padx=10,
 							pady=10, sticky="ew")       
         #PESEL
-        self.peselLabel = customtkinter.CTkLabel(self.tabview.tab("Form1"),
-									text="PESEL")
+        self.peselLabel = customtkinter.CTkLabel(self.tabview.tab("Rodo"),
+									text="PESEL", font=(10,15, "bold"))
         self.peselLabel.grid(row=2, column=0,
 							padx=10, pady=10,
 							sticky="ew")
-        self.peselEntry = customtkinter.CTkEntry(self.tabview.tab("Form1"),
+        self.peselEntry = customtkinter.CTkEntry(self.tabview.tab("Rodo"),
 						placeholder_text="000000")
         self.peselEntry.grid(row=2, column=1,
 							columnspan=2, padx=10,
 							pady=10, sticky="ew")
         #Tele
-        self.phoneLabel = customtkinter.CTkLabel(self.tabview.tab("Form1"),
-									text="Telefon")
+        self.phoneLabel = customtkinter.CTkLabel(self.tabview.tab("Rodo"),
+									text="Telefon", font=(10,15, "bold"))
         self.phoneLabel.grid(row=4, column=0,
 							padx=10, pady=10,
 							sticky="ew")
-        self.phoneEntry = customtkinter.CTkEntry(self.tabview.tab("Form1"),
+        self.phoneEntry = customtkinter.CTkEntry(self.tabview.tab("Rodo"),
 						placeholder_text="00000")
         self.phoneEntry.grid(row=4, column=1,
 							columnspan=2, padx=10,
 							pady=10, sticky="ew")
         #Email
-        self.emailLabel = customtkinter.CTkLabel(self.tabview.tab("Form1"),
-									text="e-mail")
+        self.emailLabel = customtkinter.CTkLabel(self.tabview.tab("Rodo"),
+									text="e-mail", font=(10,15, "bold"))
         self.emailLabel.grid(row=5, column=0,
 							padx=10, pady=10,
 							sticky="ew")
-        self.emailEntry = customtkinter.CTkEntry(self.tabview.tab("Form1"),
+        self.emailEntry = customtkinter.CTkEntry(self.tabview.tab("Rodo"),
 						placeholder_text="jan.kowalski@gmai.com")
         self.emailEntry.grid(row=5, column=1,
 							columnspan=2, padx=10,
 							pady=10, sticky="ew")
-        
-        
-        
+        #output type
+
+        self.outputLabel = customtkinter.CTkLabel(self.tabview.tab("Rodo"), text = "Format zapisu", font=(10,15, "bold"))
+        self.outputLabel.grid(row=6, column=0,
+							padx=10, pady=10,
+							sticky="ew")
+        self.docx_type = customtkinter.CTkCheckBox(self.tabview.tab("Rodo"), text = "docx",)
+        self.pdf_type = customtkinter.CTkCheckBox(self.tabview.tab("Rodo"), text = "pdf")
+        self.docx_type.grid(row=6, column=1, padx=0, pady=20)
+        self.pdf_type.grid(row=6, column=2, padx=0, pady=20)
+        self.docx_type.select(True)
+
         #generate button
-        self.generate_button1 = customtkinter.CTkButton(self.tabview.tab("Form1"), text="Generuj" , command=self.generate_template_rodo)
-        self.generate_button1.grid(row=6, column=0, padx=20, pady=50)
+        self.generate_button1 = customtkinter.CTkButton(self.tabview.tab("Rodo"), text="Generuj plik" , command=self.generate_template_rodo, font=(10,15, "bold"))
+        self.generate_button1.grid(row=8, column=0, padx=20, pady=50)
 
         
-        # self.optionmenu_1 = customtkinter.CTkOptionMenu(self.tabview.tab("Form1"), dynamic_resizing=False,
+        # self.optionmenu_1 = customtkinter.CTkOptionMenu(self.tabview.tab("Rodo"), dynamic_resizing=False,
         #                                                 values=["Value 1", "Value 2", "Value Long Long Long"])
         # self.optionmenu_1.grid(row=0, column=0, padx=10, pady=(20, 10))
 
-        # self.combobox_1 = customtkinter.CTkComboBox(self.tabview.tab("Form1"),
+        # self.combobox_1 = customtkinter.CTkComboBox(self.tabview.tab("Rodo"),
         #                                             values=["Value 1", "Value 2", "Value Long....."])
         # self.combobox_1.grid(row=1, column=0, padx=10, pady=(10, 10))
-        # self.string_input_button = customtkinter.CTkButton(self.tabview.tab("Form1"), text="Open CTkInputDialog",
+        # self.string_input_button = customtkinter.CTkButton(self.tabview.tab("Rodo"), text="Open CTkInputDialog",
         #                                                    command=self.open_input_dialog_event)
         # self.string_input_button.grid(row=2, column=0, padx=10, pady=(10, 10))
 
 
         # Form 2 inside
-        self.tabview.tab("Form2").grid_columnconfigure(0, weight=1)
-        self.label_tab_2 = customtkinter.CTkLabel(self.tabview.tab("Form2"), text="Select Gender")
-        self.gander_checkbox1 = customtkinter.CTkCheckBox(self.tabview.tab("Form2"), text = "male")
-        self.gander_checkbox2 = customtkinter.CTkCheckBox(self.tabview.tab("Form2"), text = "female")
+        self.tabview.tab("Upoważnienie").grid_columnconfigure(0, weight=1)
+        self.label_tab_2 = customtkinter.CTkLabel(self.tabview.tab("Upoważnienie"), text="Select Gender")
+        self.gander_checkbox1 = customtkinter.CTkCheckBox(self.tabview.tab("Upoważnienie"), text = "male")
+        self.gander_checkbox2 = customtkinter.CTkCheckBox(self.tabview.tab("Upoważnienie"), text = "female")
 
         self.gander_checkbox1.grid(row=1, column=0, padx=20, pady=(10, 10))
         self.gander_checkbox2.grid(row=2, column=0, padx=20, pady=(10, 10))
@@ -234,8 +242,14 @@ class App(customtkinter.CTk):
             CTkMessagebox.messagebox(title="Brak danych", text = "Uzupełnij wszystkie pola")
             raise TypeError("not all fields are filled in")
         
-        
+        #validate file format
+        if self.docx_type.get() == False and self.pdf_type.get() == False:
+            CTkMessagebox.messagebox(title="Brak danych", text = "Wybierz format zapisu")
+            raise TypeError("File format was not selected")
+        else:
+            pass
         try:
+
         #data provided
             name = self.nameEntry.get()
             lastName =  self.lasNameEntry.get()
@@ -254,22 +268,28 @@ class App(customtkinter.CTk):
 
             jinja_env = jinja2.Environment(autoescape=True)
             tpl.render(context, jinja_env)
-            # tpl.save(fr"C:\Users\ArturSzczotarski\psyche\Rodo_{name}.DOCX")
-            # tpl.save(fr"{os.environ['output_path']}/Rodo_{name}.DOCX")
-            tpl.save(fr"{os.environ['output_path']}/Rodo_{name}.DOCX")
-            print(fr"{os.environ['output_path']}/Rodo_{name}.DOCX")
-      
-            CTkMessagebox.messagebox(title="Plik został wygenerowany", text = f"Plik został utworzony i zapisany jako\n: {fr"{os.environ['output_path']}/Rodo_{name}.DOCX"}", size = "700x200")
-        
+
+            file_path = f"{os.environ['output_path']}/Rodo_{name}_{lastName}"
+            tpl.save(f"{file_path}.docx")
+
+            #Output format options
+            if self.pdf_type.get() == True:
+                convert(f"{file_path}.docx", f"{file_path}.pdf")
+                CTkMessagebox.messagebox(title="Plik pdf został wygenerowany", text = f"Plik został utworzony i zapisany jako\n: {f"{file_path}.pdf"}", size = "700x200")
+            if self.docx_type.get() == False:
+                os.remove(f"{file_path}.docx")
+            else:
+                CTkMessagebox.messagebox(title="Plik docx został wygenerowany", text = f"Plik został utworzony i zapisany jako\n: {f"{file_path}.docx"}", size = "700x200")
+
+        except PermissionError as error:
+            CTkMessagebox.messagebox(title="Błąd", text = f"Wybierz siężkę zapisu pliku", size = "700x200")
+            
         except BaseException as error:
             logging.error(datetime.today().strftime("%d-%m-%Y %H:%M:%S") + str(error))
             CTkMessagebox.messagebox(title="Błąd", text = f"Nie można wygenerować pliku: \n {error}", size = "700x200")
           
             
             
-
-
-    
     def selectOutputDirectory(self):       
         new_directory = filedialog.askdirectory()
         if new_directory != os.environ['output_path'] and len(new_directory) > 0:
@@ -279,19 +299,6 @@ class App(customtkinter.CTk):
 
         print(new_directory) 
 
-    def VersionValidation(self, p):
-        # if len(p) > 2:
-        #     return True    
-        # else:
-        #     CTkMessagebox.messagebox(title="worng", text = "wronmg")
-        #     raise TypeError("Only integers are allowed")
-        
-        try:
-            if len(p) > 2:
-                raise TypeError("Only integers are allowed")    
-        except:
-            CTkMessagebox.messagebox(title="worng", text = "wronmg")
-            # raise TypeError("Only integers are allowed")
 
 if __name__ == "__main__":
     app = App()

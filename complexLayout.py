@@ -54,28 +54,28 @@ class App(customtkinter.CTk):
         self.textbox.grid(row=0, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
 
         # create tabview
-        self.tabview = customtkinter.Form1(self, width=250)
+        self.tabview = customtkinter.Rodo(self, width=250)
         self.tabview.grid(row=0, column=2, padx=(20, 0), pady=(20, 0), sticky="nsew")
-        self.tabview.add("Form1")
-        self.tabview.add("Form2")
+        self.tabview.add("Rodo")
+        self.tabview.add("Upoważnienie")
         self.tabview.add("Tab 3")
-        self.tabview.tab("Form1").grid_columnconfigure(0, weight=1)  # configure grid of individual tabs
-        self.tabview.tab("Form2").grid_columnconfigure(0, weight=1)
+        self.tabview.tab("Rodo").grid_columnconfigure(0, weight=1)  # configure grid of individual tabs
+        self.tabview.tab("Upoważnienie").grid_columnconfigure(0, weight=1)
 
-        self.optionmenu_1 = customtkinter.CTkOptionMenu(self.tabview.tab("Form1"), dynamic_resizing=False,
+        self.optionmenu_1 = customtkinter.CTkOptionMenu(self.tabview.tab("Rodo"), dynamic_resizing=False,
                                                         values=["Value 1", "Value 2", "Value Long Long Long"])
         self.optionmenu_1.grid(row=0, column=0, padx=20, pady=(20, 10))
-        self.combobox_1 = customtkinter.CTkComboBox(self.tabview.tab("Form1"),
+        self.combobox_1 = customtkinter.CTkComboBox(self.tabview.tab("Rodo"),
                                                     values=["Value 1", "Value 2", "Value Long....."])
         self.combobox_1.grid(row=1, column=0, padx=20, pady=(10, 10))
-        self.string_input_button = customtkinter.CTkButton(self.tabview.tab("Form1"), text="Open CTkInputDialog",
+        self.string_input_button = customtkinter.CTkButton(self.tabview.tab("Rodo"), text="Open CTkInputDialog",
                                                            command=self.open_input_dialog_event)
         self.string_input_button.grid(row=2, column=0, padx=20, pady=(10, 10))
 
 
-        self.label_tab_2 = customtkinter.CTkLabel(self.tabview.tab("Form2"), text="Select Gender")
-        self.gander_checkbox1 = customtkinter.CTkCheckBox(self.tabview.tab("Form2"), text = "male")
-        self.gander_checkbox2 = customtkinter.CTkCheckBox(self.tabview.tab("Form2"), text = "female")
+        self.label_tab_2 = customtkinter.CTkLabel(self.tabview.tab("Upoważnienie"), text="Select Gender")
+        self.gander_checkbox1 = customtkinter.CTkCheckBox(self.tabview.tab("Upoważnienie"), text = "male")
+        self.gander_checkbox2 = customtkinter.CTkCheckBox(self.tabview.tab("Upoważnienie"), text = "female")
 
         self.gander_checkbox1.grid(row=1, column=0, padx=20, pady=(10, 10))
         self.gander_checkbox2.grid(row=2, column=0, padx=20, pady=(10, 10))
