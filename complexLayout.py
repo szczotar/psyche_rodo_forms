@@ -54,7 +54,7 @@ class App(customtkinter.CTk):
         self.textbox.grid(row=0, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
 
         # create tabview
-        self.tabview = customtkinter.Rodo(self, width=250)
+        self.tabview = customtkinter.Form1(self, width=250)
         self.tabview.grid(row=0, column=2, padx=(20, 0), pady=(20, 0), sticky="nsew")
         self.tabview.add("Rodo")
         self.tabview.add("Upoważnienie")

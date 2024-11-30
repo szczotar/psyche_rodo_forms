@@ -175,8 +175,43 @@ class App(customtkinter.CTk):
 
         self.gander_checkbox1.grid(row=1, column=0, padx=20, pady=(10, 10))
         self.gander_checkbox2.grid(row=2, column=0, padx=20, pady=(10, 10))
-        self.label_tab_2.grid(row=0, column=0, padx=20, pady=20)
 
+        self.tabview.tab("Upoważnienie").grid_columnconfigure((0,1,2,3), weight=1)  # configure grid of individual tabs
+        self.tabview.tab("Upoważnienie").grid_rowconfigure((0,1,2,3,4,5,6,7), weight=0)
+        self.label_tab_2.grid(row=0, column=0, padx=20, pady=20)
+        self.nameLabel = customtkinter.CTkLabel(self.tabview.tab("Upoważnienie"),
+									text="Imię", font=(10,15, "bold"))
+        self.nameLabel.grid(row=0, column=0,
+							padx=10, pady=10,
+							sticky="ew"
+                              )
+        self.nameEntry = customtkinter.CTkEntry(self.tabview.tab("Upoważnienie"),
+						placeholder_text="Jan")
+        self.nameEntry.grid(row=0, column=1,
+							columnspan=2, padx=10,
+							pady=10, sticky="ew")      
+        #Last name
+        self.lastnameLabel = customtkinter.CTkLabel(self.tabview.tab("Upoważnienie"),
+									text="Nazwisko", font=(10,15, "bold")) 
+        self.lastnameLabel.grid(row=1, column=0,
+							padx=10, pady=10,
+							sticky="ew")
+        self.lasNameEntry = customtkinter.CTkEntry(self.tabview.tab("Upoważnienie"),
+						placeholder_text="Kowalski")
+        self.lasNameEntry.grid(row=1, column=1,
+							columnspan=2, padx=10,
+							pady=10, sticky="ew")       
+        #PESEL
+        self.peselLabel = customtkinter.CTkLabel(self.tabview.tab("Upoważnienie"),
+									text="PESEL", font=(10,15, "bold"))
+        self.peselLabel.grid(row=2, column=0,
+							padx=10, pady=10,
+							sticky="ew")
+        self.peselEntry = customtkinter.CTkEntry(self.tabview.tab("Upoważnienie"),
+						placeholder_text="000000")
+        self.peselEntry.grid(row=2, column=1,
+							columnspan=2, padx=10,
+							pady=10, sticky="ew")
 
     def open_input_dialog_event(self):
         dialog = customtkinter.CTkInputDialog(text="Type in a number:", title="CTkInputDialog")
@@ -226,25 +261,25 @@ class App(customtkinter.CTk):
         if len(self.peselEntry.get()) == 11:
             pass
         else:
-            CTkMessagebox.messagebox(title="Błędny pesel", text = "Pesel powinien składać się z 11 cyfr")
+            CTkMessagebox.messagebox(title="Błędny pesel", text = "Pesel powinien składać się z 11 cyfr.")
             raise TypeError("Only 11 didgits are allowed")
         
         if re.match(r'^([0-9]+_?)+$', self.peselEntry.get()):
             pass  
         else:
-            CTkMessagebox.messagebox(title="Błędny pesel", text = "Pesel powinien składać się jedynie z cyfr")
+            CTkMessagebox.messagebox(title="Błędny pesel", text = "Pesel powinien składać się jedynie z cyfr.")
             raise TypeError("Only didgits are allowed")
 
         #validation empty fields
         if len(self.peselEntry.get()) != 0 and  len(self.nameEntry.get()) != 0 and len(self.lasNameEntry.get()) != 0 and len(self.phoneEntry.get()) != 0 and len(self.emailEntry.get()) != 0:
             pass
         else:
-            CTkMessagebox.messagebox(title="Brak danych", text = "Uzupełnij wszystkie pola")
+            CTkMessagebox.messagebox(title="Brak danych", text = "Uzupełnij wszystkie pola.")
             raise TypeError("not all fields are filled in")
         
         #validate file format
         if self.docx_type.get() == False and self.pdf_type.get() == False:
-            CTkMessagebox.messagebox(title="Brak danych", text = "Wybierz format zapisu")
+            CTkMessagebox.messagebox(title="Brak danych", text = "Wybierz format zapisu.")
             raise TypeError("File format was not selected")
         else:
             pass
